@@ -1,4 +1,3 @@
-"****************************************************************************************************
 "--------1---------2---------3----------4---------5---------6---------7---------8---------9---------0
 "****************************************************************************************************
 "" Neobundle インストール設定
@@ -39,6 +38,9 @@ NeoBundleLazy 'Shougo/vimshell', {
 NeoBundle 'osyo-manga/vim-reunions'
 NeoBundle 'osyo-manga/vim-marching'
 NeoBundle 'airblade/vim-gitgutter'
+NeoBundle 'nathanaelkane/vim-indent-guides'                 " インデントハイライトプラグイン
+NeoBundle 'Lokaltog/vim-easymotion'
+NeoBundle 'tpope/vim-fugitive.git'
 call neobundle#end()
 " ファイルタイプ別のプラグイン/インデントを有効にする
 filetype plugin indent on
@@ -110,6 +112,70 @@ nmap <silent> vimf :<C-u>VimFilerBufferDir -split -simple -winwidth=35 -no-quit 
 " }}}
 
 let g:seiya_auto_enable=1
+
+""" vim-indent-guides {{{
+let g:indent_guides_enable_on_vim_startup=1
+let g:indent_guides_start_level=2
+let g:indent_guides_auto_colors=0
+"autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=235
+"autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=239
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=25
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=22
+let g:indent_guides_color_change_percent = 30
+let g:indent_guides_guide_size = 1
+
+"let g:indent_guides_auto_colors=0
+"autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd   ctermbg=110
+"autocmd VimEnter,Colorscheme * :hi IndentGuidesEven  ctermbg=140
+"let g:indent_guides_enable_on_vim_startup=1
+"let g:indent_guides_guide_size=1
+" }}}
+
+""" vim-easymotion {{{
+"<Leader>をスペースに設定
+let mapleader = "\<Space>"
+let g:EasyMotion_do_mapping = 0
+nmap s <Plug>(easymotion-s2)
+xmap s <Plug>(easymotion-s2)
+omap z <Plug>(easymotion-s2)
+nmap g/ <Plug>(easymotion-sn)
+xmap g/ <Plug>(easymotion-sn)
+omap g/ <Plug>(easymotion-tn)
+let g:EasyMotion_smartcase = 1
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+let g:EasyMotion_startofline = 0
+let g:EasyMotion_keys = 'ASDFGHJKL;'
+let g:EasyMotion_use_upper = 1
+let g:EasyMotion_enter_jump_first = 1
+let g:EasyMotion_space_jump_first = 1
+hi EasyMotionTarget guifg=#80a0ff ctermfg=81
+
+" easy-motionのトレーニング
+function! StartEMTraining ()
+  noremap h <Nop>
+  noremap j <Nop>
+  noremap k <Nop>
+  noremap l <Nop>
+endfunction
+
+" easy-motionのトレーニング解除
+" ＿人人人人人人人＿
+" ＞　非推奨！！　＜
+" ￣Y^Y^Y^Y^Y^Y￣
+function! StopEMTraining ()
+  nnoremap h <Left>
+  nnoremap j gj
+  nnoremap k gk
+  nnoremap l <Right>
+endfunction
+" }}}
+
+command! StartEMTraining call StartEMTraining()
+command! StopEMTraining call StopEMTraining()
+
+" デフォルトはトレーニングモード"
+call StartEMTraining()
 
 "****************************************************************************************************
 "--------1---------2---------3----------4---------5---------6---------7---------8---------9---------0
@@ -193,6 +259,7 @@ highlight cursorline term=none cterm=none ctermfg=none ctermbg=black
 """}}}
 
 """ キーバインド設定 {{{
+
 """" normal mode ****
 """" ノーマルモードでのカーソル移動 {{{{
 nnoremap <S-h> ^
