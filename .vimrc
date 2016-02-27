@@ -115,11 +115,11 @@ let g:unite_enable_smart_case = 1
 let g:unite_source_history_yank_enable =1
 
 " unite 起動
-nnoremap <silent> ,u  :<C-u>Unite<CR>
+nnoremap <silent> ,un  :<C-u>Unite<CR>
 " grep検索
 nnoremap <silent> ,ug  :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
 " カーソル位置の単語をgrep検索
-nnoremap <silent> ,cg :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W>
+nnoremap <silent> ,ucg :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W>
 " grep検索結果の再呼出
 nnoremap <silent> ,ur  :<C-u>UniteResume search-buffer<CR>
 " 最近使ったファイルとバッファを表示
@@ -131,7 +131,7 @@ nnoremap <silent> ,uy :<C-u>Unite history/yank<CR>
 " 現在のバッファを表示
 nnoremap <silent> ,ub :<C-u>Unite buffer<CR>
 " カレントディレクトリを表示
-nnoremap <silent> ,upwd :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
 " レジスタ一覧を表示
 nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
 
@@ -144,16 +144,32 @@ endif
 " }}}
 
 """ vimshell {{{
-nmap <silent> vs :<C-u>VimShell<CR>
-nmap <silent> vp :<C-u>VimShellPop<CR>
+nmap <silent> ,vs :<C-u>VimShell<CR>
+nmap <silent> ,vp :<C-u>VimShellPop<CR>
 " }}}
 
 """ vimfiler {{{
 let g:vimfiler_as_default_explorer  = 1
 let g:vimfiler_safe_mode_by_default = 0
 let g:vimfiler_data_directory       = expand('~/.vim/etc/vimfiler')
-nmap <silent> vimf :<C-u>VimFilerBufferDir -split -simple -winwidth=35 -no-quit -toggle<CR>
+nmap <silent> ,vf :<C-u>VimFilerBufferDir -split -simple -winwidth=35 -no-quit -toggle<CR>
 " }}}
+
+""" fugitive {{{
+" Gstatus 起動
+nnoremap <silent> ,gs  :<C-u>Gstatus<CR>
+" Gread 起動
+nnoremap <silent> ,gr  :<C-u>Gread<CR>
+" Gcommit 起動
+nnoremap <silent> ,gc  :<C-u>Gcommit<CR>
+"}}}
+
+""" gitv {{{
+" Gitv ブラウザモード起動
+nnoremap <silent> ,gv  :<C-u>Gitv<CR>
+" Gitv ファイルモード起動
+nnoremap <silent> ,gf  :<C-u>Gitv!<CR>
+"}}}
 
 let g:seiya_auto_enable=1
 
@@ -269,6 +285,15 @@ set incsearch                          " インクリメンタル検索
 set wildmenu wildmode=list:full        " コマンドラインモード補完機能
 set whichwrap=b,s,h,l,<,>,[,],~        " 横移動で行を移動できるようにする
 set showcmd                            " 入力中のコマンドを表示する
+"virtualモードの時にスターで選択位置のコードを検索するようにする"
+xnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
+xnoremap # :<C-u>call <SID>VSetSearch()<CR>?<C-R>=@/<CR><CR>
+function! s:VSetSearch()
+  let temp = @s
+  norm! gv"sy
+  let @/ = '\V' . substitute(escape(@s, '/\'), '\n', '\\n', 'g')
+  let @s = temp
+endfunction
 """}}}
 
 """ 文字設定 {{{
@@ -348,12 +373,19 @@ inoremap <silent> hh <ESC>
 
 """" command mode ****
 """" コマンドモードで履歴フィルタリング {{{{
+" 履歴前方参照
 cnoremap <C-p> <Up>
+" 履歴後方参照
 cnoremap <C-n> <Down>
+" カーソル右移動
 cnoremap <c-f> <Right>
+" カーソル左移動
 cnoremap <c-b> <Left>
+" カーソル先頭へ移動(末尾はデフォルトでc-e)
 cnoremap <c-a> <Home>
+" 現在のディレクトリを入力
 cnoremap <expr> %% (getcmdtype() == ':') ? expand('%:h').'/' : '%%'
+" 置換を簡単にしたい
 cnoremap <expr> ,r (getcmdtype() == ':') ? '%s///gc' : ',r'
 """" }}}}
 
