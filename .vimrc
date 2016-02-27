@@ -16,6 +16,8 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle 'Shougo/neocomplete.vim'
 NeoBundle 'itchyny/lightline.vim'
 NeoBundle 'Shougo/vimfiler'
+NeoBundle 'Shougo/neomru.vim' " 最近使ったファイルを表示できるようにする
+NeoBundle 'Shougo/neoyank.vim'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'davidhalter/jedi-vim'
 NeoBundle 'Shougo/vimproc.vim', {
@@ -41,6 +43,8 @@ NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'nathanaelkane/vim-indent-guides'                 " インデントハイライトプラグイン
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'tpope/vim-fugitive.git'
+NeoBundle 'taketwo/vim-ros'
+NeoBundle 'gregsexton/gitv.git'
 call neobundle#end()
 " ファイルタイプ別のプラグイン/インデントを有効にする
 filetype plugin indent on
@@ -98,6 +102,46 @@ autocmd FileType python setlocal completeopt-=preview
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 """"}}}
+
+""" Unite {unite_source_history_yank_enable{{
+" insert modeで開始
+let g:unite_enable_start_insert = 1
+
+" 大文字小文字を区別しない
+let g:unite_enable_ignore_case = 1
+let g:unite_enable_smart_case = 1
+
+" yank内容をヒストリからさかのぼって貼り付けられる
+let g:unite_source_history_yank_enable =1
+
+" unite 起動
+nnoremap <silent> ,u  :<C-u>Unite<CR>
+" grep検索
+nnoremap <silent> ,ug  :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
+" カーソル位置の単語をgrep検索
+nnoremap <silent> ,cg :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W>
+" grep検索結果の再呼出
+nnoremap <silent> ,ur  :<C-u>UniteResume search-buffer<CR>
+" 最近使ったファイルとバッファを表示
+nnoremap <silent> ,uu :<C-u>Unite file_mru buffer<CR>
+"スペースキーとdキーで最近開いたディレクトリを表示
+nnoremap <silent> ,ud :<C-u>Unite<Space>directory_mru<CR>
+" yanの履歴を表示
+nnoremap <silent> ,uy :<C-u>Unite history/yank<CR>
+" 現在のバッファを表示
+nnoremap <silent> ,ub :<C-u>Unite buffer<CR>
+" カレントディレクトリを表示
+nnoremap <silent> ,upwd :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+" レジスタ一覧を表示
+nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
+
+" unite grep に ag(The Silver Searcher) を使う
+if executable('ag')
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+  let g:unite_source_grep_recursive_opt = ''
+endif
+" }}}
 
 """ vimshell {{{
 nmap <silent> vs :<C-u>VimShell<CR>
@@ -175,7 +219,8 @@ command! StartEMTraining call StartEMTraining()
 command! StopEMTraining call StopEMTraining()
 
 " デフォルトはトレーニングモード"
-call StartEMTraining()
+"call StartEMTraining()
+call StopEMTraining()
 
 "****************************************************************************************************
 "--------1---------2---------3----------4---------5---------6---------7---------8---------9---------0
@@ -223,6 +268,7 @@ set backspace=start,eol,indent         " backspace で削除可能
 set incsearch                          " インクリメンタル検索
 set wildmenu wildmode=list:full        " コマンドラインモード補完機能
 set whichwrap=b,s,h,l,<,>,[,],~        " 横移動で行を移動できるようにする
+set showcmd                            " 入力中のコマンドを表示する
 """}}}
 
 """ 文字設定 {{{
@@ -304,7 +350,11 @@ inoremap <silent> hh <ESC>
 """" コマンドモードで履歴フィルタリング {{{{
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
+cnoremap <c-f> <Right>
+cnoremap <c-b> <Left>
+cnoremap <c-a> <Home>
 cnoremap <expr> %% (getcmdtype() == ':') ? expand('%:h').'/' : '%%'
+cnoremap <expr> ,r (getcmdtype() == ':') ? '%s///gc' : ',r'
 """" }}}}
 
 
@@ -347,4 +397,3 @@ let g:Tex_ViewRule_pdf = 'evince'
 "let g:Tex_ViewRule_pdf = 'firefox -new-window'
 "let g:Tex_ViewRule_pdf = 'chromium --new-window'
 """ }}}
-
