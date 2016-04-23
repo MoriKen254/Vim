@@ -45,6 +45,7 @@ NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'tpope/vim-fugitive.git'
 NeoBundle 'taketwo/vim-ros'
 NeoBundle 'gregsexton/gitv.git'
+NeoBundle 'justmao945/vim-clang'
 call neobundle#end()
 " ファイルタイプ別のプラグイン/インデントを有効にする
 filetype plugin indent on
@@ -245,17 +246,55 @@ call StopEMTraining()
 autocmd filetype python setlocal omnifunc=jedi#completions
 let g:jedi#completions_enabled = 0
 let g:jedi#auto_vim_configuration = 0
+"""}}}
+
+" 'Shougo/neocomplete.vim' {{{
+let g:neocomplete#enable_at_startup = 1
 if !exists('g:neocomplete#force_omni_input_patterns')
 	    let g:neocomplete#force_omni_input_patterns = {}
 endif
 let g:neocomplete#force_omni_input_patterns.python = '\h\w*\|[^. \t]\.\w*'
 let g:python_highlight_all = 1
+let g:neocomplete#force_overwrite_completefunc = 1
+let g:neocomplete#force_omni_input_patterns.c = '\h\w*\|[^. \t]\.\w*'
+      "\ '[^.[:digit:] *\t]\%(\.\|->\)\w*'
+let g:neocomplete#force_omni_input_patterns.cpp = '\h\w*\|[^. \t]\.\w*'
+      "\ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
 """}}}
 
-""" for some comlete function(cpp)
-let g:neocomplete#force_omni_input_patterns.cpp =
-      \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*' 
+" 'justmao945/vim-clang' {{{
 
+" disable auto completion for vim-clanG
+let g:clang_auto = 0
+
+" default 'longest' can not work with neocomplete
+let g:clang_c_completeopt   = 'menuone'
+let g:clang_cpp_completeopt = 'menuone'
+
+if executable('clang-3.6')
+    let g:clang_exec = 'clang-3.6'
+elseif executable('clang-3.5')
+    let g:clang_exec = 'clang-3.5'
+elseif executable('clang-3.4')
+    let g:clang_exec = 'clang-3.4'
+else
+    let g:clang_exec = 'clang'
+endif
+
+if executable('clang-format-3.6')
+    let g:clang_format_exec = 'clang-format-3.6'
+elseif executable('clang-format-3.5')
+    let g:clang_format_exec = 'clang-format-3.5'
+elseif executable('clang-format-3.4')
+    let g:clang_format_exec = 'clang-format-3.4'
+else
+    let g:clang_exec = 'clang-format'
+endif
+
+let g:clang_c_options = '-std=c11'
+let g:clang_cpp_options = '-std=c++11 -stdlib=libc++'
+
+" }}}
 
 "****************************************************************************************************
 "--------1---------2---------3----------4---------5---------6---------7---------8---------9---------0
